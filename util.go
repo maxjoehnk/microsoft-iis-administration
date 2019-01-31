@@ -68,6 +68,7 @@ func buildRequest(client Client, method, path string, body interface{}) (*http.R
 		if err := json.NewEncoder(b).Encode(body); err != nil {
 			return nil, err
 		}
+		log.Printf("%s %s %s", method, path, b)
 	}
 
 	url := fmt.Sprintf("%s%s", client.Host, path)

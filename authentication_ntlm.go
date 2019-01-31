@@ -5,14 +5,27 @@ import (
 	"fmt"
 )
 
-type WindowsAuthentication struct {
-	ID      string `json:"id"`
+type WindowsAuthenticationProvider struct {
+	Name    string `json:"name"`
 	Enabled bool   `json:"enabled"`
 }
 
+type WindowsAuthentication struct {
+	ID        string                          `json:"id"`
+	Enabled   bool                            `json:"enabled"`
+	Providers []WindowsAuthenticationProvider `json:"providers"`
+}
+
 func (windows WindowsAuthentication) ToMap() map[string]interface{} {
+	providers := make([]string, 0)
+	for _, provider := range windows.Providers {
+		if provider.Enabled {
+			providers = append(providers, provider.Name)
+		}
+	}
 	windowsMap := make(map[string]interface{}, 1)
 	windowsMap["enabled"] = windows.Enabled
+	windowsMap["providers"] = providers
 
 	return windowsMap
 }
