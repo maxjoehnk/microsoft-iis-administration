@@ -1,14 +1,15 @@
 package iis
 
 import (
+	"context"
 	"encoding/json"
 )
 
-func (client Client) CreateAppPool(name string) (*ApplicationPool, error) {
+func (client Client) CreateAppPool(ctx context.Context, name string) (*ApplicationPool, error) {
 	reqBody := CreateApplicationPoolRequest{
 		Name: name,
 	}
-	res, err := httpPost(client, "/api/webserver/application-pools", reqBody)
+	res, err := httpPost(ctx, client, "/api/webserver/application-pools", reqBody)
 	if err != nil {
 		return nil, err
 	}

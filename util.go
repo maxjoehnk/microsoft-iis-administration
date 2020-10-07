@@ -2,6 +2,7 @@ package iis
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -10,45 +11,40 @@ import (
 	"net/http"
 )
 
-// Do a GET request and parse the body to json
-func getJson(client Client, path string, r interface{}) error {
-	data, err := httpGet(client, path)
+func getJson(ctx context.Context, client Client, path string, r interface{}) error {
+	data, err := httpGet(ctx, client, path)
 	if err != nil {
 		return err
 	}
 	return json.Unmarshal(data, &r)
 }
 
-// Do a GET request
-func httpGet(client Client, path string) ([]byte, error) {
-	response, err := request(client, "GET", path, nil)
+func httpGet(ctx context.Context, client Client, path string) ([]byte, error) {
+	response, err := request(ctx, client, "GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
 	return fetchBody(response)
 }
 
-// Do a POST request
-func httpPost(client Client, path string, body interface{}) ([]byte, error) {
-	response, err := request(client, "POST", path, body)
+func httpPost(ctx context.Context, client Client, path string, body interface{}) ([]byte, error) {
+	response, err := request(ctx, client, "POST", path, body)
 	if err != nil {
 		return nil, err
 	}
 	return fetchBody(response)
 }
 
-// Do a PATCH request
-func httpPatch(client Client, path string, body interface{}) ([]byte, error) {
-	response, err := request(client, "PATCH", path, body)
+func httpPatch(ctx context.Context, client Client, path string, body interface{}) ([]byte, error) {
+	response, err := request(ctx, client, "PATCH", path, body)
 	if err != nil {
 		return nil, err
 	}
 	return fetchBody(response)
 }
 
-// Do a DELETE request
-func httpDelete(client Client, path string) error {
-	if _, err := request(client, "DELETE", path, nil); err != nil {
+func httpDelete(ctx context.Context, client Client, path string) error {
+	if _, err := request(ctx, client, "DELETE", path, nil); err != nil {
 		return err
 	}
 	return nil
@@ -61,7 +57,7 @@ func buildHttpClient() *http.Client {
 	return &http.Client{Transport: transport}
 }
 
-func buildRequest(client Client, method, path string, body interface{}) (*http.Request, error) {
+func buildRequest(ctx context.Context, client Client, method, path string, body interface{}) (*http.Request, error) {
 	log.Printf("%s %s", method, path)
 	b := new(bytes.Buffer)
 	if body != nil {
@@ -72,7 +68,7 @@ func buildRequest(client Client, method, path string, body interface{}) (*http.R
 	}
 
 	url := fmt.Sprintf("%s%s", client.Host, path)
-	req, err := http.NewRequest(method, url, b)
+	req, err := http.NewRequestWithContext(ctx, method, url, b)
 	if err != nil {
 		return nil, err
 	}
@@ -96,8 +92,8 @@ func executeRequest(req *http.Request) (*http.Response, error) {
 	return response, err
 }
 
-func request(client Client, method, path string, body interface{}) (*http.Response, error) {
-	req, err := buildRequest(client, method, path, body)
+func request(ctx context.Context, client Client, method, path string, body interface{}) (*http.Response, error) {
+	req, err := buildRequest(ctx, client, method, path, body)
 	if err != nil {
 		return nil, err
 	}

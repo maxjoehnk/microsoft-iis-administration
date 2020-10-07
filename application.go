@@ -1,6 +1,7 @@
 package iis
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -32,16 +33,16 @@ type ApplicationReference struct {
 	Status string `json:"status"`
 }
 
-func (client Client) ReadApplication(id string) (*Application, error) {
+func (client Client) ReadApplication(ctx context.Context, id string) (*Application, error) {
 	url := fmt.Sprintf("/api/webserver/webapps/%s", id)
 	var app Application
-	if err := getJson(client, url, &app); err != nil {
+	if err := getJson(ctx, client, url, &app); err != nil {
 		return nil, err
 	}
 	return &app, nil
 }
 
-func (client Client) DeleteApplication(id string) error {
+func (client Client) DeleteApplication(ctx context.Context, id string) error {
 	url := fmt.Sprintf("/api/webserver/webapps/%s", id)
-	return httpDelete(client, url)
+	return httpDelete(ctx, client, url)
 }

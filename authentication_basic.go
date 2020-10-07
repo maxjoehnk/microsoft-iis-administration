@@ -1,6 +1,7 @@
 package iis
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -21,10 +22,10 @@ func (basic BasicAuthentication) ToMap() map[string]interface{} {
 	return basicMap
 }
 
-func (client Client) UpdateBasicAuthentication(auth *BasicAuthentication) (BasicAuthentication, error) {
+func (client Client) UpdateBasicAuthentication(ctx context.Context, auth *BasicAuthentication) (BasicAuthentication, error) {
 	url := fmt.Sprintf("/api/webserver/authentication/basic-authentication/%s", auth.ID)
 	var basic BasicAuthentication
-	res, err := httpPatch(client, url, &auth)
+	res, err := httpPatch(ctx, client, url, &auth)
 	if err != nil {
 		return basic, err
 	}

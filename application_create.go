@@ -1,12 +1,13 @@
 package iis
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
 
-func (client Client) CreateApplication(application CreateApplicationRequest) (*Application, error) {
-	res, err := httpPost(client, "/api/webserver/webapps", application)
+func (client Client) CreateApplication(ctx context.Context, application CreateApplicationRequest) (*Application, error) {
+	res, err := httpPost(ctx, client, "/api/webserver/webapps", application)
 	if err != nil {
 		return nil, err
 	}

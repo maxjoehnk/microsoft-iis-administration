@@ -1,6 +1,7 @@
 package iis
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -19,9 +20,9 @@ func (digest DigestAuthentication) ToMap() map[string]interface{} {
 	return digestMap
 }
 
-func (client Client) UpdateDigestAuthentication(auth *DigestAuthentication) (*DigestAuthentication, error) {
+func (client Client) UpdateDigestAuthentication(ctx context.Context, auth *DigestAuthentication) (*DigestAuthentication, error) {
 	url := fmt.Sprintf("/api/webserver/authentication/digest-authentication/%s", auth.ID)
-	res, err := httpPatch(client, url, &auth)
+	res, err := httpPatch(ctx, client, url, &auth)
 	if err != nil {
 		return nil, err
 	}

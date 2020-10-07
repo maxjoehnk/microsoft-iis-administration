@@ -1,6 +1,7 @@
 package iis
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -19,20 +20,20 @@ func (anonymous AnonymousAuthentication) ToMap() map[string]interface{} {
 	return anonymousMap
 }
 
-func (client Client) ReadAnonymousAuthenticationFromId(id string) (*AnonymousAuthentication, error) {
+func (client Client) ReadAnonymousAuthenticationFromId(ctx context.Context, id string) (*AnonymousAuthentication, error) {
 	url := fmt.Sprintf("/api/webserver/authentication/anonymous-authentication/%s", id)
 	var auth AnonymousAuthentication
-	err := getJson(client, url, &auth)
+	err := getJson(ctx, client, url, &auth)
 	if err != nil {
 		return nil, err
 	}
 	return &auth, nil
 }
 
-func (client Client) UpdateAnonymousAuthentication(auth *AnonymousAuthentication) (AnonymousAuthentication, error) {
+func (client Client) UpdateAnonymousAuthentication(ctx context.Context, auth *AnonymousAuthentication) (AnonymousAuthentication, error) {
 	var anonymous AnonymousAuthentication
 	url := fmt.Sprintf("/api/webserver/authentication/anonymous-authentication/%s", auth.ID)
-	res, err := httpPatch(client, url, &auth)
+	res, err := httpPatch(ctx, client, url, &auth)
 	if err != nil {
 		return anonymous, err
 	}

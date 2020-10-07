@@ -1,6 +1,7 @@
 package iis
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -93,16 +94,16 @@ type PeriodicRestart struct {
 	Schedule      []interface{} `json:"schedule"`
 }
 
-func (client Client) ReadAppPool(id string) (*ApplicationPool, error) {
+func (client Client) ReadAppPool(ctx context.Context, id string) (*ApplicationPool, error) {
 	url := fmt.Sprintf("/api/webserver/application-pools/%s", id)
 	var appPool ApplicationPool
-	if err := getJson(client, url, &appPool); err != nil {
+	if err := getJson(ctx, client, url, &appPool); err != nil {
 		return nil, err
 	}
 	return &appPool, nil
 }
 
-func (client Client) DeleteAppPool(id string) error {
+func (client Client) DeleteAppPool(ctx context.Context, id string) error {
 	url := fmt.Sprintf("/api/webserver/application-pools/%s", id)
-	return httpDelete(client, url)
+	return httpDelete(ctx, client, url)
 }

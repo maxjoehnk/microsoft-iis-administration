@@ -1,6 +1,7 @@
 package iis
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -30,9 +31,9 @@ func (windows WindowsAuthentication) ToMap() map[string]interface{} {
 	return windowsMap
 }
 
-func (client Client) UpdateWindowsAuthentication(auth *WindowsAuthentication) (*WindowsAuthentication, error) {
+func (client Client) UpdateWindowsAuthentication(ctx context.Context, auth *WindowsAuthentication) (*WindowsAuthentication, error) {
 	url := fmt.Sprintf("/api/webserver/authentication/windows-authentication/%s", auth.ID)
-	res, err := httpPatch(client, url, &auth)
+	res, err := httpPatch(ctx, client, url, &auth)
 	if err != nil {
 		return nil, err
 	}
