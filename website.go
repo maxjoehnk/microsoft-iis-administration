@@ -10,7 +10,7 @@ type Website struct {
 
 type WebsiteBinding struct {
 	Protocol  string `json:"protocol"`
-	Port      int64  `json:"port"`
+	Port      int    `json:"port"`
 	IPAddress string `json:"ip_address"`
 	Hostname  string `json:"hostname"`
 }
