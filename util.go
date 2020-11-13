@@ -87,7 +87,7 @@ func executeRequest(req *http.Request) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := guardStatusCode(req.URL, response); err != nil {
+	if err := guardStatusCode(req.Method, req.URL, response); err != nil {
 		return nil, err
 	}
 	return response, err
@@ -112,9 +112,13 @@ func fetchBody(res *http.Response) ([]byte, error) {
 	return resBody, nil
 }
 
-func guardStatusCode(url *url.URL, response *http.Response) error {
+func guardStatusCode(method string, url *url.URL, response *http.Response) error {
 	if response.StatusCode < 200 || response.StatusCode > 400 {
-		return fmt.Errorf("%s returned invalid status code: %s", url, response.Status)
+		var body string
+		if buffer, err := fetchBody(response); err == nil {
+			body = string(buffer[:])
+		}
+		return fmt.Errorf("%s %s returned invalid status code: %s\n%s", method, url, response.Status, body)
 	}
 	return nil
 }
