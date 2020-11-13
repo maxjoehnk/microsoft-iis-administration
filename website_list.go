@@ -2,16 +2,16 @@ package iis
 
 import "context"
 
-type Website struct {
+type WebsiteListItem struct {
 	Name string `json:"name"`
 	ID   string `json:"id"`
 }
 
 type WebsiteListResponse struct {
-	Websites []Website `json:"websites"`
+	Websites []WebsiteListItem `json:"websites"`
 }
 
-func (client Client) ListWebsites(ctx context.Context) ([]Website, error) {
+func (client Client) ListWebsites(ctx context.Context) ([]WebsiteListItem, error) {
 	var res WebsiteListResponse
 	err := getJson(ctx, client, "/api/webserver/websites", &res)
 	if err != nil {
