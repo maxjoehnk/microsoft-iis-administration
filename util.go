@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 )
 
 func getJson(ctx context.Context, client Client, path string, r interface{}) error {
@@ -67,8 +68,8 @@ func buildRequest(ctx context.Context, client Client, method, path string, body 
 		log.Printf("%s %s %s", method, path, b)
 	}
 
-	url := fmt.Sprintf("%s%s", client.Host, path)
-	req, err := http.NewRequestWithContext(ctx, method, url, b)
+	requestUrl := fmt.Sprintf("%s%s", client.Host, path)
+	req, err := http.NewRequestWithContext(ctx, method, requestUrl, b)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +87,7 @@ func executeRequest(req *http.Request) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := guardStatusCode(response); err != nil {
+	if err := guardStatusCode(req.URL, response); err != nil {
 		return nil, err
 	}
 	return response, err
@@ -111,9 +112,9 @@ func fetchBody(res *http.Response) ([]byte, error) {
 	return resBody, nil
 }
 
-func guardStatusCode(response *http.Response) error {
+func guardStatusCode(url *url.URL, response *http.Response) error {
 	if response.StatusCode < 200 || response.StatusCode > 400 {
-		return fmt.Errorf("invalid status code: %d - %s", response.StatusCode, response.Status)
+		return fmt.Errorf("%s returned invalid status code: %s", url, response.Status)
 	}
 	return nil
 }
