@@ -6,9 +6,10 @@ import (
 )
 
 type CreateWebsiteRequest struct {
-	Name         string           `json:"name"`
-	PhysicalPath string           `json:"physical_path"`
-	Bindings     []WebsiteBinding `json:"bindings"`
+	Name            string               `json:"name"`
+	PhysicalPath    string               `json:"physical_path"`
+	Bindings        []WebsiteBinding     `json:"bindings"`
+	ApplicationPool ApplicationReference `json:"application_pool"`
 }
 
 func (client Client) CreateWebsite(ctx context.Context, req CreateWebsiteRequest) (*Website, error) {
